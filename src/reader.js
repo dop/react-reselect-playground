@@ -1,73 +1,77 @@
 import {createSelector, defaultMemoize} from 'reselect';
 
-export function clockReader(state) {
-  return {
-    getCount() {
-      return state.count;
-    }
-  };
+class ClockReader {
+  constructor(state) {
+    this.state = state;
+  }
+
+  getCount() {
+    return this.state.count;
+  }
 }
 
-export function tableReader(state) {
-  return new class {
-    getNames() {
-      return state.names;
-    }
+class TableReader {
+  constructor(state) {
+    this.state = state;
+  }
 
-    isPhoneVisible() {
-      return state.showPhone;
-    }
+  getNames() {
+    return this.state.names;
+  }
 
-    isEmailVisible() {
-      return state.showEmail;
-    }
+  isPhoneVisible() {
+    return this.state.showPhone;
+  }
 
-    getQuery() {
-      return state.query;
-    }
+  isEmailVisible() {
+    return this.state.showEmail;
+  }
 
-    isLoading() {
-      return state.isLoading;
-    }
+  getQuery() {
+    return this.state.query;
+  }
 
-    getPeople() {
-      return state.names.map(({name, contact, memberSince}) => {
-        const {first, last} = name;
-        const {phone, email} = contact;
-        return {
-          name: first + ' ' + last,
-          since: memberSince,
-          phone: this.isPhoneVisible() ? phone[0] : '',
-          email: this.isEmailVisible() ? email[0] : ''
-        };
-      });
-    }
+  isLoading() {
+    return this.state.isLoading;
+  }
 
-    getFilteredPeople() {
-      const query = this.getQuery();
-      const people = this.getPeople();
-      if (query) {
-        return people.filter((person) => person.name.toLowerCase().includes(query.toLowerCase()));
-      }
-      return people;
-    }
+  getPeople() {
+    return this.state.names.map(({name, contact, memberSince}) => {
+      const {first, last} = name;
+      const {phone, email} = contact;
+      return {
+        name: first + ' ' + last,
+        since: memberSince,
+        phone: this.isPhoneVisible() ? phone[0] : '',
+        email: this.isEmailVisible() ? email[0] : ''
+      };
+    });
+  }
 
-    getPeople2() {
-      return memoPeople(this.isPhoneVisible(), this.isEmailVisible(), this.getNames());
+  getFilteredPeople() {
+    const query = this.getQuery();
+    const people = this.getPeople();
+    if (query) {
+      return people.filter((person) => person.name.toLowerCase().includes(query.toLowerCase()));
     }
+    return people;
+  }
 
-    getFilteredPeople2() {
-      return memoFilteredPeople(this.getQuery(), this.getPeople2());
-    }
+  getPeople2() {
+    return memoPeople(this.isPhoneVisible(), this.isEmailVisible(), this.getNames());
+  }
 
-    getPeople3() {
-      return peopleSelector(state);
-    }
+  getFilteredPeople2() {
+    return memoFilteredPeople(this.getQuery(), this.getPeople2());
+  }
 
-    getFilteredPeople3() {
-      return filteredPeopleSelector(state);
-    }
-  };
+  getPeople3() {
+    return peopleSelector(this.state);
+  }
+
+  getFilteredPeople3() {
+    return filteredPeopleSelector(this.state);
+  }
 }
 
 const peopleSelector = createSelector(
@@ -121,7 +125,7 @@ const memoFilteredPeople = defaultMemoize(function (query, people) {
 
 export function stateReader(state) {
   return {
-    getTableReader: () => tableReader(state.table),
-    getClockReader: () => clockReader(state.clock)
+    getTableReader: () => new TableReader(state.table),
+    getClockReader: () => new ClockReader(state.clock)
   };
 };
