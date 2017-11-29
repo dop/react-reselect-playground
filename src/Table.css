@@ -1,0 +1,27 @@
+.Wrapper {
+  margin: 1em auto 2em;
+  max-width: 800px;
+  font-family: monospace;
+}
+
+.Controls {
+  text-align: left;
+  margin-bottom: 1em;
+}
+
+.Controls label {
+  margin-right: 1em;
+}
+
+.MyTable {
+  width: 100%;
+}
+
+.MyTable th {
+  border-bottom: 1px solid gray;
+}
+
+.MyTable td, .MyTable th {
+  padding: .3em .5em;
+  text-align: left;
+}
