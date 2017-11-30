@@ -78,7 +78,7 @@ function mapStateToProps(state) {
   const reader = stateReader(state).getTableReader();
   return {
     isLoading: reader.isLoading(),
-    people: reader.getFilteredPeople3()
+    people: reader.getFilteredPeople()
   };
 }
 
